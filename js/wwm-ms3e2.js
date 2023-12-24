@@ -7,6 +7,7 @@ async function startProgram() {
 	
 	await setStance(Stance.Bipod)
 	domePlay(Sound.R2D2.Chatty.Chatty47)
+	fadeInOut()
 	
 	await delay(50 * 60) // complete program after 50 minutes; delay() function's unit of measurement is seconds
 }
@@ -100,7 +101,7 @@ function setupReactions() {
 	setTimeout(play.bind(null, Sound.R2D2.General.EngageHyperdrive), toMillis(22, 4000)) // victory fly away; cheer
 	setTimeout(play.bind(null, Sound.R2D2.Hey.Hey10), toMillis(22, 24900)) // "an unscheduled visitor"
 	setTimeout(play.bind(null, Sound.R2D2.Sad.Sad10), toMillis(23, 1000)) // grogu pops out of cockpit; "i want to be left alone"
-	setTimeout(download), toMillis(23, 16700)) // "download the astromech"
+	setTimeout(download, toMillis(23, 16700)) // "download the astromech"
 	setTimeout(clouds, toMillis(23, 35200)) // through clouds till 23:49
 	setTimeout(play.bind(null, Sound.R2D2.Alarm.Alarm7), toMillis(24, 33500)) // jets landing
 	setTimeout(play.bind(null, Sound.R2D2.General.HeadSpin), toMillis(24, 41800)) // grogu yes; scan then yes
@@ -123,7 +124,7 @@ function setupReactions() {
 	setTimeout(play.bind(null, Sound.R2D2.Chatty.Chatty27), toMillis(30, 4000))
 	setTimeout(play.bind(null, Sound.R2D2.Chatty.Chatty26), toMillis(30, 7000))
 	setTimeout(play.bind(null, Sound.R2D2.Positive), toMillis(30, 23000)) // dark saber kill electro monster, falls at 30:29500
-	setTimeout(tiptoe), toMillis(30, 39800)) // eye is alive, crawling at 30:44
+	setTimeout(tiptoe, toMillis(30, 39800)) // eye is alive, crawling at 30:44
 	setTimeout(play.bind(null, Sound.R2D2.Alarm.Alarm13), toMillis(30, 55800)) // "behind you!"
 	setTimeout(play.bind(null, Sound.R2D2.Positive.Positive21), toMillis(31, 0)) // slices electro monster hand off
 	setTimeout(play.bind(null, Sound.R2D2.Laugh.Laugh2), toMillis(31, 11000)) // slices leg, falls, then overhead kill at 31:17.5
@@ -241,6 +242,32 @@ async function domeLight(sound) {
 
 	if (sound) {
 		sound.play()
+	}
+}
+
+async function fadeInOut() {
+	while (true) {
+		await fadeBackLED({r: 0, g: 255, b: 77}, {r: 255, g: 249, b: 8}, 4)
+		await fadeBackLED({r: 255, g: 249, b: 8}, {r: 0, g: 255, b: 77}, 4)
+	}
+}
+
+async function fadeBackLED(color1, color2, delaySec) {
+	const loopDelay = .1
+	const loopCondition = delaySec * loopDelay * 100
+	const rCounter = (color2.r - color1.r) / loopCondition
+	const gCounter = (color2.g - color1.g) / loopCondition
+	const bCounter = (color2.b - color1.b) / loopCondition
+
+	// console.log('r: ' + rCounter, ' g: ' + gCounter, 'b: ' + bCounter)
+	for (i = 0; i < loopCondition; i++) {
+		color1.r = color1.r + rCounter
+		color1.g = color1.g + gCounter
+		color1.b = color1.b + bCounter
+		
+		// console.log('r: ' + color1.r, ' g: ' + color1.g, 'b: ' + color1.b)
+		setBackLed(color1)
+		await delay(loopDelay)
 	}
 }
 
